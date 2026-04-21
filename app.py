@@ -243,18 +243,20 @@ def reject():
 # 🏢 GET ALL ROOMS (for floors layout)
 @app.route("/all-rooms")
 def get_all_rooms():
-    rooms = []
+    try:
+        rooms = []
 
-    # 🔥 use a known existing day
-    rooms_ref = db.collection("schedule") \
-                  .document("monday") \
-                  .collection("rooms") \
-                  .stream()
+        rooms_ref = db.collection("schedule") \
+                      .document("monday") \
+                      .collection("rooms") \
+                      .stream()
 
-    for room_doc in rooms_ref:
-        rooms.append(room_doc.id)
+        for room_doc in rooms_ref:
+            rooms.append(room_doc.id)
 
-    return jsonify({"rooms": sorted(rooms)})
+        return jsonify({"rooms": rooms})
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 if __name__ == "__main__":
     app.run(debug=True)
